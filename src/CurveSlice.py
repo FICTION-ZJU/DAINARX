@@ -42,7 +42,7 @@ class Slice:
         self.data = data
         self.feature = []
         for v in self.data:
-            self.feature.append(np.array(get_feature(v)).astype(np.float32))
+            self.feature.append(np.array(get_feature(v)).astype(np.float64))
         self.mode = None
         self.isFront = isFront
 

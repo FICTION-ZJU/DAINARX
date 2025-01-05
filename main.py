@@ -105,4 +105,4 @@ def main(json_path: str, data_path='data', need_creat=None):
 
 
 if __name__ == "__main__":
-    main("./automata/1.json")
+    main("./automata/test2.json")
