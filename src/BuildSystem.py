@@ -25,6 +25,7 @@ def build_system(data: list[Slice], res_adj: dict, get_feature, has_bias=False, 
     for (mode, cur_list) in data_of_mode.items():
         var_list = []
         de_list = []
+        # TODO: 耦合的差分方程
         for cur in cur_list:
             var_list.append('x' + str(len(var_list)))
             de_list.append(DE(get_feature(cur), [], has_bias, other_items))

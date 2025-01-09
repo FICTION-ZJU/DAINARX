@@ -23,6 +23,7 @@ def run(data_list, config):
         print(change_points)
         slice_curve(slice_data, data, change_points, get_feature)
     Slice.fit_threshold(slice_data)
+    # TODO: 修改聚类
     clustering(slice_data)
     adj = guard_learning(slice_data, config['kernel'])
     sys = build_system(slice_data, adj, get_feature, config['need_bias'], config['other_items'])
@@ -81,7 +82,7 @@ def main(json_path: str, data_path='data', need_creat=None):
             mode_list.append(mode_data_temp)
 
     print("Be running!")
-    sys = run(data, config)
+    sys = run(data[1:], config)
 
     print("Start simulation")
     fit_idx = 0
@@ -105,4 +106,4 @@ def main(json_path: str, data_path='data', need_creat=None):
 
 
 if __name__ == "__main__":
-    main("./automata/test2.json")
+    main("./automata/test.json")

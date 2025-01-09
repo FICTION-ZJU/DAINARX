@@ -86,11 +86,11 @@
       "x2": 4.0
     }
   ],
-  "fit_config": {
+  "config": {
     "dt": 1E-5,
     "total_time": 0.02,
     "dim": 2,
-    "need_bias": false,
+    "need_bias": true,
     "other_items": ""
   }
 }

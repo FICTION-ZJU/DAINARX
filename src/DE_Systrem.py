@@ -28,7 +28,6 @@ class ODESystem:
             var_expr, eq_expr = expr.split('=')
             eq_expr = re.sub(pattern, repl, eq_expr)
             idx, dim = get_info(var_expr)
-            print(eq_expr)
             res[idx] = eval("lambda x: " + eq_expr)
             dim_list[idx] = dim
         return dim_list, res

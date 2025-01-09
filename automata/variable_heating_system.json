@@ -82,13 +82,11 @@
       "x2": [11.0]
     }
   ],
-
-
-  "fit_config": {
+  "config": {
     "dt": 0.01,
     "total_time": 20.0,
     "dim": 2,
-    "need_bias": false,
+    "need_bias": true,
     "other_items": ""
   }
 }

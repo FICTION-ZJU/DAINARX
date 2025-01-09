@@ -64,11 +64,11 @@
       "x": [54]
     }
   ],
-  "fit_config": {
+  "config": {
     "dt": 0.01,
     "total_time": 10.0,
-    "dim": 3,
-    "need_bias": false,
-    "other_items": ""
+    "dim": 1,
+    "need_bias": true,
+    "other_items": "x[0] * x[0]"
   }
 }
