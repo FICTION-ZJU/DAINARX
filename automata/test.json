@@ -48,13 +48,5 @@
       "x1": [2],
       "x2": [4]
     }
-  ],
-  "config": {
-    "dt": 0.01,
-    "total_time": 21.0,
-    "dim": 3,
-    "need_bias": true,
-    "other_items": "",
-    "kernel": "linear"
-  }
+  ]
 }
