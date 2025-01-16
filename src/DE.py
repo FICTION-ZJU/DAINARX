@@ -112,7 +112,7 @@ class DE:
         while len(self.state) < self.dim:
             self.state.append(0)
 
-    def next(self, *args):
+    def next(self):
         val = 0
         for i in range(self.dim):
             val += self.state[i] * self.eq[i]

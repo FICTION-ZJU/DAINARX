@@ -69,10 +69,15 @@ class HybridAutomata:
 
     def next(self, *args):
         res = list(self.mode_list[self.mode_state].next(*args))
-        for to, fun in self.adj.get(self.mode_state, {}):
-            if fun(*res):
-                self.mode_list[to].load(self.mode_list[self.mode_state])
-                self.mode_state = to
+        while True:
+            fl = True
+            for to, fun in self.adj.get(self.mode_state, {}):
+                if fun(*res):
+                    self.mode_list[to].load(self.mode_list[self.mode_state])
+                    self.mode_state = to
+                    fl = False
+                    break
+            if fl:
                 break
         return res, self.mode_state
 

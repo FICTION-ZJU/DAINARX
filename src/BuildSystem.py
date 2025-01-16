@@ -4,6 +4,7 @@ import numpy as np
 from src.CurveSlice import Slice
 from src.HybridAutomata import Node, HybridAutomata
 from src.DE import DE
+from src.DE_Systrem import DESystem
 
 
 class ModelFun:
@@ -18,18 +19,12 @@ def build_system(data: list[Slice], res_adj: dict, get_feature, has_bias=False, 
     data_of_mode = {}
     for cur in data:
         if data_of_mode.get(cur.mode) is None:
-            data_of_mode[cur.mode] = [[] for _ in range(len(cur.data))]
-        for i in range(len(cur.data)):
-            data_of_mode[cur.mode][i].append(cur.data[i])
+            data_of_mode[cur.mode] = []
+        data_of_mode[cur.mode].append(cur.data)
     mode_list = {}
     for (mode, cur_list) in data_of_mode.items():
-        var_list = []
-        de_list = []
-        # TODO: 耦合的差分方程
-        for cur in cur_list:
-            var_list.append('x' + str(len(var_list)))
-            de_list.append(DE(get_feature(cur), [], has_bias, other_items))
-        mode_list[mode] = Node(var_list, de_list)
+        feature_list = get_feature(cur_list, is_list=True)[0]
+        mode_list[mode] = DESystem(feature_list, [], get_feature)
     adj = {}
     for (u, v), model in res_adj.items():
         if adj.get(u) is None:
@@ -39,7 +34,6 @@ def build_system(data: list[Slice], res_adj: dict, get_feature, has_bias=False, 
 
 
 def get_init_state(data, mode_list, bias):
-    # TODO: match correct mode
     init_state = {'mode': mode_list[bias - 1]}
     for i in range(data.shape[0]):
         init_state['x' + str(i)] = data[i, (bias - 1)::-1]

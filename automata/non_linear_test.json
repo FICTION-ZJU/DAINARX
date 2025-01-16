@@ -69,6 +69,6 @@
     "total_time": 10.0,
     "dim": 1,
     "need_bias": true,
-    "other_items": "x[0] * x[0]"
+    "other_items": "x[?] * x[?]"
   }
 }
