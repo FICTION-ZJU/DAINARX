@@ -90,7 +90,7 @@
       },
       {
         "direction": "5 -> 7",
-        "condition": "x2 <= 5"
+        "condition": "x2 <= 10"
       },
       {
         "direction": "5 -> 1",
@@ -98,11 +98,11 @@
       },
       {
         "direction": "6 -> 5",
-        "condition": "x3 <= 5"
+        "condition": "x3 >= 20"
       },
       {
         "direction": "6 -> 8",
-        "condition": "x2 >= 20"
+        "condition": "x2 <= 5"
       },
       {
         "direction": "6 -> 2",
@@ -110,7 +110,7 @@
       },
       {
         "direction": "7 -> 8",
-        "condition": "x3 >= 20"
+        "condition": "x3 <= 5"
       },
       {
         "direction": "7 -> 5",
@@ -137,15 +137,15 @@
   "init_state": [
     {
       "mode": 1,
-      "x1": [23.0],
-      "x2": [25.0],
-      "x3": [28.0]
-    },
-    {
-      "mode": 1,
       "x1": [22.0],
       "x2": [21.0],
       "x3": [25.0]
+    },
+    {
+      "mode": 1,
+      "x1": [23.0],
+      "x2": [25.0],
+      "x3": [28.0]
     },
     {
       "mode": 2,
@@ -197,10 +197,12 @@
     }
   ],
   "config": {
-    "dt": 0.01,
+    "dt": 0.005,
     "total_time": 20.0,
-    "dim": 2,
+    "dim": 1,
+    "window_size": 4,
     "need_bias": true,
-    "other_items": ""
+    "other_items": "",
+    "class_weight": 1
   }
 }

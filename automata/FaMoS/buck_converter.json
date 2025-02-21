@@ -88,9 +88,10 @@
   ],
   "config": {
     "dt": 1E-5,
-    "total_time": 0.0201,
+    "total_time": 0.02,
     "dim": 1,
     "need_bias": true,
-    "other_items": "x_[?]"
+    "other_items": "x_[?]",
+    "class_weight": 10
   }
 }

@@ -46,9 +46,10 @@
   ],
   "config": {
     "dt": 0.01,
-    "total_time": 100.0,
+    "total_time": 60.0,
     "dim": 1,
     "need_bias": true,
-    "other_items": "1 / x[?]"
+    "other_items": "1 / x[?]",
+    "class_weight": 1
   }
 }

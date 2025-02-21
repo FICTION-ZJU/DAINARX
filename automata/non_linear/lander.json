@@ -97,10 +97,11 @@
   "config": {
     "dt": 0.01,
     "total_time": 10,
-    "dim": 2,
+    "dim": 1,
     "clustering_method": "fit",
     "minus": true,
     "need_bias": true,
-    "other_items": "x_[?]; x1 : x3[?] / x2[?];"
+    "other_items": "x_[?]; x1 : x3[?] / x2[?];",
+    "class_weight": 1
   }
 }
