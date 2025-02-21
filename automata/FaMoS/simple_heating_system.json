@@ -66,7 +66,7 @@
   ],
   "config": {
     "dt": 0.01,
-    "total_time": 19.8,
+    "total_time": 21.0,
     "dim": 1,
     "need_bias": true,
     "other_items": "",

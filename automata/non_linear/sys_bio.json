@@ -130,7 +130,8 @@
     "dt": 0.001,
     "total_time": 2.0,
     "dim": 1,
-    "need_bias": true,
-    "other_items": "x[?]*x_[?]; x_[?]"
+    "need_bias": false,
+    "other_items": "x[?]*x_[?]; x_[?]",
+    "class_weight": 0.1
   }
 }
