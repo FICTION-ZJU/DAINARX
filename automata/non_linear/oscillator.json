@@ -25,7 +25,7 @@
   "init_state": [
   {
       "mode": 1,
-      "x1": [-0.878],
+      "x1": [-0.888],
       "x2": [3.12]
   },
   {
@@ -80,7 +80,6 @@
     "dim": 1,
     "need_bias": true,
     "other_items": "x_[?]; sin(x[?]); sin(x_[?])",
-    "kernel": "rbf",
-    "class_weight": 1
+    "kernel": "rbf"
   }
 }

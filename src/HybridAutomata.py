@@ -5,6 +5,7 @@ from src.DE import ODE
 from src.DE_Systrem import ODESystem
 import json
 import matplotlib.pyplot as plt
+from math import *
 
 
 class Node:

@@ -4,7 +4,7 @@ import numpy as np
 from src.CurveSlice import Slice
 
 
-def guard_learning(data: list[Slice], kernel='linear'):
+def guard_learning(data: list[Slice], kernel='linear', class_weight=1.0):
     positive_sample = {}
     negative_sample = {}
     for i in range(len(data)):
@@ -23,7 +23,7 @@ def guard_learning(data: list[Slice], kernel='linear'):
 
     adj = {}
     for (u, v), sample in positive_sample.items():
-        svc = SVC(C=1e6, kernel=kernel, class_weight={0: 0.1, 1: 1})
+        svc = SVC(C=1e6, kernel=kernel, class_weight={0: class_weight, 1: 1})
         label = np.concatenate((np.zeros(negative_sample[u].shape[0]), np.ones(len(positive_sample[(u, v)]))))
         sample = np.concatenate((negative_sample[u], positive_sample[(u, v)]))
         svc.fit(sample, label)

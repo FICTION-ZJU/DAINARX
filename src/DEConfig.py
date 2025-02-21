@@ -2,6 +2,7 @@ import re
 
 import numpy as np
 from src.DE import DE
+from math import *
 
 
 class FeatureExtractor:
@@ -129,13 +130,13 @@ class FeatureExtractor:
             err.append(max(np.abs((a @ x) - b)))
         return res, err, [self.dim for _ in range(self.var_num)]
 
-    def __call__(self, data, is_list=False, need_err=False):
+    def __call__(self, data, is_list=False):
         if self.minus:
             return self.work_minus(data, is_list)
         else:
             return self.work_normal(data, is_list)
 
-    def append_data(self, matrix_list, b_list, data: np.array, max_dim=None):
+    def append_data(self, matrix_list, b_list, data: np.array):
         data = np.array(data)
         for i in range(len(data[0]) - self.dim):
             if i == 0:
@@ -143,7 +144,7 @@ class FeatureExtractor:
             else:
                 this_line = data[:, (self.dim + i - 1):(i - 1):-1]
             for idx in range(len(this_line)):
-                matrix_list[idx].append(self.get_items(this_line, idx, max_dim))
+                matrix_list[idx].append(self.get_items(this_line, idx))
                 b_list[idx].append(data[idx][i + self.dim])
 
     def append_data_only(self, matrix_a, b, data: np.array, idx, max_dim=None):

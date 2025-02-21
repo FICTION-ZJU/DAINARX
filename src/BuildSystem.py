@@ -15,7 +15,7 @@ class ModelFun:
         return self.model.predict([[*args]])[0] > 0.5
 
 
-def build_system(data: list[Slice], res_adj: dict, get_feature, has_bias=False, other_items=""):
+def build_system(data: list[Slice], res_adj: dict, get_feature):
     data_of_mode = {}
     for cur in data:
         if data_of_mode.get(cur.mode) is None:

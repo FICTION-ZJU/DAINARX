@@ -1,65 +1,83 @@
 import numpy as np
-
-def eva_trace(trace, est_trace, Ts):
-    # Extract changepoint sets
-    est_chp = est_trace['chpoints']
-    chp = trace['chpoints']
-
-    len_chp = min(len(est_chp), len(chp))
-    est_chp2 = est_chp[:len_chp]
-    chp2 = chp[:len_chp]
-
-    # Compute tau_max
-    tau_max = max(abs(np.array(est_chp2) - np.array(chp2)))
-
-    # Compute eps
-    eps = 0.0
-    for j in range(1, len_chp):
-        startj = chp[j - 1]
-        endj = chp[j]
-        startj_est = est_chp[j - 1]
-        endj_est = est_chp[j]
-
-        # Extract the segments
-        xs = trace['x'][startj:endj, :]
-        xs_est = est_trace['x'][startj_est:endj_est, :]
-
-        # Mitigate ordering effects by executing in both orders
-        eps_temp = errorAlignedPoints(xs, xs_est, tau_max)
-        eps = max(eps, eps_temp)
-        eps_temp = errorAlignedPoints(xs_est, xs, tau_max)
-        eps = max(eps, eps_temp)
-
-    return [len(trace['x']) * Ts, len_chp, tau_max * Ts, eps]
+import bisect
+import time
+from src.utils import get_ture_chp
 
 
-def errorAlignedPoints(xs, xs_est, tau_max):
-    """
-    Computes the maximal distance between matching points from two traces
-    allowing for a time shift up to tau_max.
+class Evaluation:
+    def __init__(self, name):
+        self.name = name
+        self.start_time = None
+        self.last_time = None
+        self.time_list = []
+        self.data = {}
 
-    Parameters:
-    xs (ndarray): Original trace segment.
-    xs_est (ndarray): Estimated trace segment.
-    tau_max (int): Maximum allowed time shift.
+    def start(self):
+        self.start_time = time.time()
+        self.last_time = self.start_time
 
-    Returns:
-    float: Maximum alignment error.
-    """
-    eps = 0.0
-    num_var = xs.shape[1]
+    def stop(self, name):
+        self.time_list.append((name, time.time() - self.start_time))
 
-    # Go over all points from the original trace
-    for h in range(xs.shape[0]):
-        # Due to possible time shift, consider matching points from estimated trace
-        start_temp = max(h - tau_max, 0)
-        end_temp = min(h + tau_max, xs_est.shape[0] - 1)
+    def recording_time(self, name):
+        now = time.time()
+        self.time_list.append((name, now - self.last_time))
+        print(f"recording {name} time: {now - self.last_time}")
+        self.last_time = now
 
-        # Compute errors for each matching and choose the minimal one
-        xs_temp = xs[h, :] - xs_est[start_temp:end_temp + 1, :]
-        e_temp = np.min(np.diag(xs_temp @ xs_temp.T))
-        eps = max(eps, np.sqrt(e_temp))
+    def submit(self, **args):
+        self.data.update(args)
 
-    return eps
+    def calc(self):
+        res = {"name": self.name}
+        fit_mode = get_ture_chp(self.data['fit_mode'])
+        fit_data = self.data['fit_data']
+        gt_mode = get_ture_chp(self.data['gt_mode'])
+        gt_data = self.data['gt_data']
+        dt = self.data['dt']
+        diff = np.abs(fit_data - gt_data)
+
+        for var_idx in range(diff.shape[0]):
+            diff[var_idx] /= np.max(np.abs(gt_data[var_idx]))
+
+        res["tc"] = max(max_min_abs_diff(fit_mode, gt_mode), max_min_abs_diff(gt_mode, fit_mode)) * dt
+
+        train_tc = 0.0
+        for chp, gt in zip(self.data["chp"], self.data["gt_chp"]):
+            train_tc = max(train_tc, max_min_abs_diff(chp, gt), max_min_abs_diff(gt, chp)) * dt
+        res["clustering_error"] = abs(self.data['gt_mode_num'] - self.data['mode_num'])
+        res["train_tc"] = train_tc
+        res["max_diff"] = np.max(diff)
+        res["mean_diff"] = np.mean(diff)
+        res["time"] = self.time_list.copy()
+
+        return res
+
+
+def max_min_abs_diff(a, b):
+    sorted_b = sorted(b)
+    max_diff = 0
+
+    # 处理a中的每个元素，找到在sorted_b中的最小差
+    for x in a:
+        pos = bisect.bisect_left(sorted_b, x)
+        if pos == 0:
+            diff = abs(sorted_b[0] - x)
+        elif pos == len(sorted_b):
+            diff = abs(sorted_b[-1] - x)
+        else:
+            left = sorted_b[pos - 1]
+            right = sorted_b[pos]
+            diff = min(abs(x - left), abs(x - right))
+        max_diff = max(max_diff, diff)
+
+    return max_diff
+
+
+def eva_trace(mode, trace, gt_mode, gt_trace, Ts):
+    tc = max(max_min_abs_diff(mode, gt_mode), max_min_abs_diff(gt_mode, mode))
+    mean_diff = np.mean(np.abs(trace - gt_trace))
+    return tc * Ts, mean_diff
+
 
 

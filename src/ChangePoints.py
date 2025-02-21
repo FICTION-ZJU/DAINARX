@@ -13,12 +13,11 @@ def mergeChangePoints(data, th: float):
     return res
 
 
-def find_change_point(data: np.array, get_feature, w: int = 10, th: float = 0.1, merge_th=None):
+def find_change_point(data: np.array, get_feature, w: int = 10, merge_th=None):
     r"""
     :param data: (N, M) Sample points for N variables.
     :param get_feature: Feature extraction function.
     :param w: Slide window size, default is 10.
-    :param th: Error detection threshold. The default value is 0.1.
     :param merge_th: Change point merge threshold. The default value is w.
     :return: change_points, err_data: The change points, and the error in each position of N variables.
     """

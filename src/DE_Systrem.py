@@ -33,7 +33,7 @@ class ODESystem:
             dim_list[idx] = dim
         return dim_list, res
 
-    def __init__(self, expr_list, var_list, init_state=None, method='e'):
+    def __init__(self, expr_list, var_list, init_state=None, method='rk'):
         if init_state is None:
             init_state = []
         dim_list, eq_list = ODESystem.analyticalExpression(expr_list, var_list)

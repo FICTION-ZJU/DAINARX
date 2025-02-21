@@ -9,6 +9,14 @@ class Slice:
     Method = 'fit'
 
     @staticmethod
+    def clear():
+        Slice.RelativeErrorThreshold = []
+        Slice.AbsoluteErrorThreshold = []
+        Slice.ToleranceRatio = 0.1
+        Slice.FitErrorThreshold = 1.
+        Slice.Method = 'fit'
+
+    @staticmethod
     def get_dis(v1, v2):
         dis = np.linalg.norm(v1 - v2, ord=1)
         d1 = np.linalg.norm(v1, ord=1)
@@ -22,7 +30,7 @@ class Slice:
         feature1 = data1.feature
         feature2 = data2.feature
         assert len(feature1) == len(feature2)
-        _, err, fit_dim = get_feature([data1.data, data2.data], is_list=True, need_err=True)
+        _, err, fit_dim = get_feature([data1.data, data2.data], is_list=True)
         if fit_dim <= max(data1.fit_dim, data2.fit_dim):
             Slice.FitErrorThreshold = min(Slice.FitErrorThreshold, max(err) * Slice.ToleranceRatio)
         while len(Slice.RelativeErrorThreshold) < len(feature1):

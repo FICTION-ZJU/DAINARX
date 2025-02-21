@@ -100,7 +100,6 @@
     "total_time": 5.0,
     "dim": 1,
     "need_bias": true,
-    "other_items": "x0:x2[?]; x1:x3[?]",
-    "class_weight": 1
+    "other_items": "x0:x2[?]; x1:x3[?]"
   }
 }

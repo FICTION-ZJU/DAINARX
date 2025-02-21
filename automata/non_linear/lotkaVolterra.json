@@ -81,7 +81,6 @@
     "need_bias": true,
     "window_size": 6,
     "other_items": "x_[?]; x[?] * x_[?]",
-    "kernel": "rbf",
-    "class_weight": 1
+    "kernel": "rbf"
   }
 }

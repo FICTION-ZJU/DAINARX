@@ -57,7 +57,7 @@ python main.py
     "window_size": 10,          // 滑动窗口大小，默认10
     "clustering_method": "fit", // 聚类方法，默认fit，有fit和dis两种选项
     "minus": false,             // 是否最小化阶数，默认为false
-    "need_bias": false,         // 是否需要常数项，默认为false
+    "need_bias": true,         // 是否需要常数项，默认为true
     "kernel": "linear",         // SVM核函数，默认为linear
     "other_items": ""           // 差分方程的其他非线性项或交叉项，默认为空
     // other_item: 说明

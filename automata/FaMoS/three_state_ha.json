@@ -78,7 +78,6 @@
     "total_time": 20.0,
     "dim": 2,
     "need_bias": false,
-    "other_items": "",
-    "class_weight": 1
+    "other_items": ""
   }
 }
