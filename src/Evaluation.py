@@ -44,7 +44,8 @@ class Evaluation:
             for var_idx in range(diff.shape[0]):
                 diff[var_idx] /= np.max(np.abs(gt_data[var_idx]))
 
-            res["tc"] = max(res["tc"], max_min_abs_diff(fit_mode, gt_mode), max_min_abs_diff(gt_mode, fit_mode)) * dt
+            res["tc"] = max(res["tc"], max_min_abs_diff(fit_mode, gt_mode) * dt,
+                            max_min_abs_diff(gt_mode, fit_mode) * dt)
 
             train_tc = 0.0
             for chp, gt in zip(self.data["chp"], self.data["gt_chp"]):

@@ -65,8 +65,8 @@
     }
   ],
   "config": {
-    "dt": 0.001,
-    "total_time": 10.0,
+    "dt": 1e-4,
+    "total_time": 5.0,
     "dim": 1,
     "need_bias": true,
     "other_items": "x[?] * x[?]",

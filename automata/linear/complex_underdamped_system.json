@@ -78,7 +78,7 @@
     }
   ],
   "config": {
-    "dt": 0.01,
+    "dt": 0.005,
     "total_time": 20.0,
     "dim": 2,
     "minus": true,

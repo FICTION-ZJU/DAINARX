@@ -75,7 +75,7 @@ class FeatureExtractor:
         self.fun_list, self.fun_dim = FeatureExtractor.analyticalExpression(other_items, var_num, dim)
 
     def get_eps(self, data):
-        return 1e-6 * self.dt * np.max(data)
+        return 1e-7 * self.dt * len(data) * np.max(np.abs(data))
 
     def get_items(self, data, input_data, idx, max_dim=None):
         res = []
@@ -137,6 +137,59 @@ class FeatureExtractor:
             res.append(x)
             err.append(max(np.abs((a @ x) - b)))
         return res, err, [self.dim for _ in range(self.var_num)]
+
+    # def fittable(self, data, input_data, is_list=False):
+    #     if self.minus and False:
+    #         res = []
+    #         err = []
+    #         max_dim = []
+    #         for idx in range(self.var_num):
+    #             now_dim = 1
+    #             while True:
+    #                 a, b = [], []
+    #                 if is_list:
+    #                     for block, block_input in zip(data, input_data):
+    #                         self.append_data_only(a, b, block, block_input, idx, now_dim)
+    #                 else:
+    #                     self.append_data_only(a, b, data, input_data, idx, now_dim)
+    #                 x = np.linalg.lstsq(a, b, rcond=None)[0]
+    #                 a, b = np.array(a), np.array(b)
+    #                 now_err = np.abs((a @ x) - b)
+    #                 if now_dim == self.dim or max(now_err) < 1e-8:
+    #                     res.append(x)
+    #                     max_dim.append(now_dim)
+    #                     err.append(max(now_err))
+    #                     for i in range(len(now_err) - 10):
+    #                         err_t = now_err[i:(i + 10)]
+    #                         if max(err_t) > self.get_eps(b[i:(i + 10)]):
+    #                             return False
+    #                     if len(err) <= 10 and max(err) > self.get_eps(b):
+    #                         return False
+    #                     break
+    #                 now_dim += 1
+    #     else:
+    #         var_num = len(data) if not is_list else len(data[0])
+    #         matrix_list = [[] for _ in range(var_num)]
+    #         b_list = [[] for _ in range(var_num)]
+    #         if is_list:
+    #             for block, block_input in zip(data, input_data):
+    #                 self.append_data(matrix_list, b_list, block, block_input)
+    #         else:
+    #             self.append_data(matrix_list, b_list, data, input_data)
+    #         err_list = []
+    #         for a, b in zip(matrix_list, b_list):
+    #             x = np.linalg.lstsq(a, b, rcond=None)[0]
+    #             err = np.abs((a @ x) - b)
+    #             err_list.append(err)
+    #             for i in range(len(err) - 20):
+    #                 err_t = err[i:(i + 20)]
+    #                 if max(err_t) > self.get_eps(b[i:(i + 20)]):
+    #                     return False
+    #             if len(err) <= 20 and max(err) > self.get_eps(b):
+    #                 return False
+    #     return True
+
+
 
     def __call__(self, data, input_data, is_list=False):
         if self.minus:

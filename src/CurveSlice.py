@@ -56,7 +56,7 @@ class Slice:
     @staticmethod
     def fit_threshold(data: list):
         for i in range(len(data)):
-            if data[i].isFront:
+            if data[i].isFront or not data[i].valid or not data[i - 1].valid:
                 continue
             Slice.fit_threshold_one(data[i].get_feature, data[i], data[i - 1])
         for s in data:
@@ -71,7 +71,7 @@ class Slice:
         self.data = data
         self.input_data = input_data
         self.get_feature = get_feature
-        self.valid = True
+        self.valid = length >= get_feature.dim + 1
         if len(data[0]) > get_feature.dim:
             self.feature, err, self.fit_dim = get_feature(data, input_data)
             self.err = np.max(err)
