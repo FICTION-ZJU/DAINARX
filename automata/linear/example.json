@@ -1,0 +1,76 @@
+{
+  "automation": {
+    "var": "x1, x2",
+    "mode": [
+      {
+        "id": 1,
+        "eq": "x1[1] = 1, x2[1] = 0"
+      },
+      {
+        "id": 2,
+        "eq": "x1[1] = -1, x2[2] = -3 * x2[1] - 25 * x2[0] + 4"
+      },
+      {
+        "id": 3,
+        "eq": "x1[1] = -1, x2[2] = x2[1]"
+      }
+    ],
+    "edge": [
+      {
+        "direction": "1 -> 2",
+        "condition": "x1 >= 5"
+      },
+      {
+        "direction": "2 -> 3",
+        "condition": "x1 <= 0"
+      }
+    ]
+  },
+  "init_state": [
+    {
+      "mode": 1,
+      "x1": [0],
+      "x2": [3]
+    },
+    {
+      "mode": 1,
+      "x1": [0],
+      "x2": [3]
+    },
+    {
+      "mode": 1,
+      "x1": [0],
+      "x2": [3]
+    },
+    {
+      "mode": 1,
+      "x1": [0],
+      "x2": [3]
+    },
+    {
+      "mode": 1,
+      "x1": [0],
+      "x2": [3]
+    },
+    {
+      "mode": 1,
+      "x1": [0],
+      "x2": [3]
+    },
+    {
+      "mode": 1,
+      "x1": [0],
+      "x2": [3]
+    }
+  ],
+  "config": {
+    "dt": 0.01,
+    "total_time": 13.0,
+    "dim": 2,
+    "minus": true,
+    "need_bias": true,
+    "need_reset": true,
+    "other_items": "",
+    "class_weight": 1
+  }
+}
