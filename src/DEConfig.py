@@ -64,14 +64,20 @@ class FeatureExtractor:
                 res_dim[idx].append(FeatureExtractor.findMaxDim(s) + 1)
         return res, res_dim
 
-    def __init__(self, var_num: int, dim: int, need_bias: bool = False, minus: bool = False, other_items: str = ''):
+    def __init__(self, var_num: int, input_num: int, dim: int, dt: float,
+                 need_bias: bool = False, minus: bool = False, other_items: str = ''):
         self.var_num = var_num
         self.dim = dim
+        self.dt = dt
+        self.input_num = input_num
         self.minus = minus
         self.need_bias = need_bias
         self.fun_list, self.fun_dim = FeatureExtractor.analyticalExpression(other_items, var_num, dim)
 
-    def get_items(self, data, idx, max_dim=None):
+    def get_eps(self, data):
+        return 1e-7 * self.dt * len(data) * np.max(np.abs(data))
+
+    def get_items(self, data, input_data, idx, max_dim=None):
         res = []
         if max_dim is None:
             max_dim = self.dim
@@ -85,11 +91,13 @@ class FeatureExtractor:
                 res.append(0.)
             else:
                 res.append(fun(data))
+        for input_idx in range(len(input_data)):
+            res.append(input_data[input_idx][0])
         if self.need_bias:
             res.append(1.)
         return res
 
-    def work_minus(self, data, is_list: bool):
+    def work_minus(self, data, input_data, is_list: bool):
         res = []
         err = []
         max_dim = []
@@ -98,10 +106,10 @@ class FeatureExtractor:
             while True:
                 a, b = [], []
                 if is_list:
-                    for block in data:
-                        self.append_data_only(a, b, block, idx, now_dim)
+                    for block, block_input in zip(data, input_data):
+                        self.append_data_only(a, b, block, block_input, idx, now_dim)
                 else:
-                    self.append_data_only(a, b, data, idx, now_dim)
+                    self.append_data_only(a, b, data, input_data, idx, now_dim)
                 x = np.linalg.lstsq(a, b, rcond=None)[0]
                 a, b = np.array(a), np.array(b)
                 now_err = max(np.abs((a @ x) - b))
@@ -113,46 +121,104 @@ class FeatureExtractor:
                 now_dim += 1
         return res, err, max_dim
 
-    def work_normal(self, data, is_list: bool):
+    def work_normal(self, data, input_data, is_list: bool):
         res = []
         err = []
         var_num = len(data) if not is_list else len(data[0])
         matrix_list = [[] for _ in range(var_num)]
         b_list = [[] for _ in range(var_num)]
         if is_list:
-            for block in data:
-                self.append_data(matrix_list, b_list, block)
+            for block, block_input in zip(data, input_data):
+                self.append_data(matrix_list, b_list, block, block_input)
         else:
-            self.append_data(matrix_list, b_list, data)
+            self.append_data(matrix_list, b_list, data, input_data)
         for a, b in zip(matrix_list, b_list):
             x = np.linalg.lstsq(a, b, rcond=None)[0]
             res.append(x)
             err.append(max(np.abs((a @ x) - b)))
         return res, err, [self.dim for _ in range(self.var_num)]
 
-    def __call__(self, data, is_list=False):
-        if self.minus:
-            return self.work_minus(data, is_list)
-        else:
-            return self.work_normal(data, is_list)
+    # def fittable(self, data, input_data, is_list=False):
+    #     if self.minus and False:
+    #         res = []
+    #         err = []
+    #         max_dim = []
+    #         for idx in range(self.var_num):
+    #             now_dim = 1
+    #             while True:
+    #                 a, b = [], []
+    #                 if is_list:
+    #                     for block, block_input in zip(data, input_data):
+    #                         self.append_data_only(a, b, block, block_input, idx, now_dim)
+    #                 else:
+    #                     self.append_data_only(a, b, data, input_data, idx, now_dim)
+    #                 x = np.linalg.lstsq(a, b, rcond=None)[0]
+    #                 a, b = np.array(a), np.array(b)
+    #                 now_err = np.abs((a @ x) - b)
+    #                 if now_dim == self.dim or max(now_err) < 1e-8:
+    #                     res.append(x)
+    #                     max_dim.append(now_dim)
+    #                     err.append(max(now_err))
+    #                     for i in range(len(now_err) - 10):
+    #                         err_t = now_err[i:(i + 10)]
+    #                         if max(err_t) > self.get_eps(b[i:(i + 10)]):
+    #                             return False
+    #                     if len(err) <= 10 and max(err) > self.get_eps(b):
+    #                         return False
+    #                     break
+    #                 now_dim += 1
+    #     else:
+    #         var_num = len(data) if not is_list else len(data[0])
+    #         matrix_list = [[] for _ in range(var_num)]
+    #         b_list = [[] for _ in range(var_num)]
+    #         if is_list:
+    #             for block, block_input in zip(data, input_data):
+    #                 self.append_data(matrix_list, b_list, block, block_input)
+    #         else:
+    #             self.append_data(matrix_list, b_list, data, input_data)
+    #         err_list = []
+    #         for a, b in zip(matrix_list, b_list):
+    #             x = np.linalg.lstsq(a, b, rcond=None)[0]
+    #             err = np.abs((a @ x) - b)
+    #             err_list.append(err)
+    #             for i in range(len(err) - 20):
+    #                 err_t = err[i:(i + 20)]
+    #                 if max(err_t) > self.get_eps(b[i:(i + 20)]):
+    #                     return False
+    #             if len(err) <= 20 and max(err) > self.get_eps(b):
+    #                 return False
+    #     return True
 
-    def append_data(self, matrix_list, b_list, data: np.array):
+
+
+    def __call__(self, data, input_data, is_list=False):
+        if self.minus:
+            return self.work_minus(data, input_data, is_list)
+        else:
+            return self.work_normal(data, input_data, is_list)
+
+    def append_data(self, matrix_list, b_list, data: np.array, input_data):
         data = np.array(data)
+        input_data = np.array(input_data)
         for i in range(len(data[0]) - self.dim):
             if i == 0:
                 this_line = data[:, (self.dim - 1)::-1]
+                this_line_input = input_data[:, self.dim::-1]
             else:
                 this_line = data[:, (self.dim + i - 1):(i - 1):-1]
+                this_line_input = input_data[:, (self.dim + i):(i - 1):-1]
             for idx in range(len(this_line)):
-                matrix_list[idx].append(self.get_items(this_line, idx))
+                matrix_list[idx].append(self.get_items(this_line, this_line_input, idx))
                 b_list[idx].append(data[idx][i + self.dim])
 
-    def append_data_only(self, matrix_a, b, data: np.array, idx, max_dim=None):
+    def append_data_only(self, matrix_a, b, data: np.array, input_data, idx, max_dim=None):
         data = np.array(data)
         for i in range(len(data[0]) - self.dim):
             if i == 0:
                 this_line = data[:, (self.dim - 1)::-1]
+                this_line_input = input_data[:, self.dim::-1]
             else:
                 this_line = data[:, (self.dim + i - 1):(i - 1):-1]
-            matrix_a.append(self.get_items(this_line, idx, max_dim))
+                this_line_input = input_data[:, (self.dim + i):(i - 1):-1]
+            matrix_a.append(self.get_items(this_line, this_line_input, idx, max_dim))
             b.append(data[idx][i + self.dim])

@@ -92,6 +92,7 @@
     "dim": 1,
     "need_bias": true,
     "other_items": "x_[?]",
-    "class_weight": 10
+    "kernel": "rbf",
+    "class_weight": 2
   }
 }

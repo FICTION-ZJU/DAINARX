@@ -29,28 +29,33 @@ class Evaluation:
         self.data.update(args)
 
     def calc(self):
-        res = {"name": self.name}
-        fit_mode = get_ture_chp(self.data['fit_mode'])
-        fit_data = self.data['fit_data']
-        gt_mode = get_ture_chp(self.data['gt_mode'])
-        gt_data = self.data['gt_data']
         dt = self.data['dt']
-        diff = np.abs(fit_data - gt_data)
+        res = {"name": self.name, 'train_tc': 0., 'clustering_error': None, 'tc': 0., 'max_diff': 0., 'mean_diff': 0.}
+        # fit_mode = get_ture_chp(self.data['fit_mode'])
+        # fit_data = self.data['fit_data']
+        # gt_mode = get_ture_chp(self.data['gt_mode'])
+        # gt_data = self.data['gt_data']
+        for fit_mode, fit_data, gt_mode, gt_data in zip(self.data['fit_mode'], self.data['fit_data'],
+                                                        self.data['gt_mode'], self.data['gt_data']):
+            fit_mode = get_ture_chp(fit_mode)
+            gt_mode = get_ture_chp(gt_mode)
+            diff = np.abs(fit_data - gt_data)
 
-        for var_idx in range(diff.shape[0]):
-            diff[var_idx] /= np.max(np.abs(gt_data[var_idx]))
+            for var_idx in range(diff.shape[0]):
+                diff[var_idx] /= np.max(np.abs(gt_data[var_idx]))
 
-        res["tc"] = max(max_min_abs_diff(fit_mode, gt_mode), max_min_abs_diff(gt_mode, fit_mode)) * dt
+            res["tc"] = max(res["tc"], max_min_abs_diff(fit_mode, gt_mode) * dt,
+                            max_min_abs_diff(gt_mode, fit_mode) * dt)
 
-        train_tc = 0.0
-        for chp, gt in zip(self.data["chp"], self.data["gt_chp"]):
-            train_tc = max(train_tc, max_min_abs_diff(chp, gt), max_min_abs_diff(gt, chp)) * dt
+            train_tc = 0.0
+            for chp, gt in zip(self.data["chp"], self.data["gt_chp"]):
+                train_tc = max(train_tc, max_min_abs_diff(chp, gt) * dt, max_min_abs_diff(gt, chp) * dt)
+            res["train_tc"] = max(res["train_tc"], train_tc)
+            res["max_diff"] = max(np.max(diff), res["max_diff"])
+            res["mean_diff"] = res['mean_diff'] + np.mean(diff)
+        res["mean_diff"] = res["mean_diff"] / len(self.data['fit_mode'])
         res["clustering_error"] = abs(self.data['gt_mode_num'] - self.data['mode_num'])
-        res["train_tc"] = train_tc
-        res["max_diff"] = np.max(diff)
-        res["mean_diff"] = np.mean(diff)
         res["time"] = self.time_list.copy()
-
         return res
 
 

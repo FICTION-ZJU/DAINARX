@@ -14,7 +14,10 @@
     "edge": [
       {
         "direction": "1 -> 2",
-        "condition": "x >= 10"
+        "condition": "x >= 10",
+        "reset": {
+          "x": ["x - 1"]
+        }
       },
       {
         "direction": "2 -> 1",
@@ -49,7 +52,9 @@
     "total_time": 60.0,
     "dim": 1,
     "need_bias": true,
+    "need_reset": true,
     "other_items": "1 / x[?]",
-    "class_weight": 1
+    "class_weight": 1,
+    "svm_c": 1e5
   }
 }

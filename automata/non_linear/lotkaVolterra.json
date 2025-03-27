@@ -75,7 +75,7 @@
   }
   ],
   "config": {
-    "dt": 0.01,
+    "dt": 0.001,
     "total_time": 10,
     "dim": 1,
     "need_bias": true,

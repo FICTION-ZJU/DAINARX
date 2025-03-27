@@ -14,38 +14,38 @@
     "edge": [
       {
         "direction": "1 -> 2",
-        "condition": "x1 + 2 * x2 >= 150"
+        "condition": "x1 >= 150"
       },
       {
         "direction": "2 -> 1",
-        "condition": "2 * x1 + x2 <= 10"
+        "condition": "x2 <= 10"
       }
     ]
   },
   "init_state": [
     {
       "mode": 1,
-      "x1": [2],
-      "x2": [1]
+      "x1": [121],
+      "x2": [54]
     },
     {
       "mode": 1,
-      "x1": [2],
-      "x2": [7]
+      "x1": [98],
+      "x2": [86]
     },
     {
       "mode": 1,
-      "x1": [3],
-      "x2": [8]
+      "x1": [43],
+      "x2": [84]
     },
     {
       "mode": 2,
-      "x1": [6],
-      "x2": [4]
+      "x1": [68],
+      "x2": [28]
     },
     {
-      "mode": 2,
-      "x1": [2],
+      "mode": 1,
+      "x1": [141],
       "x2": [10]
     }
   ],
@@ -54,6 +54,7 @@
     "total_time": 20.0,
     "dim": 1,
     "need_bias": true,
+    "window_size": 4,
     "other_items": "",
     "class_weight": 1
   }

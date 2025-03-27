@@ -1,0 +1,68 @@
+{
+  "automation": {
+    "var": "x",
+    "input": "u",
+    "mode": [
+      {
+        "id": 1,
+        "eq": "x[2] = u - 0.5 * x[1] + x[0] - 1.5 * x[0] ** 3"
+      },
+      {
+        "id": 2,
+        "eq": "x[2] = u - 0.2 * x[1] + x[0] - 0.5 * x[0] ** 3"
+      }
+    ],
+    "edge": [
+      {
+        "direction": "1 -> 2",
+        "condition": "abs(x) <= 0.8",
+        "reset": {
+          "x": ["", "x[1] * 0.95"]
+        }
+      },
+      {
+        "direction": "2 -> 1",
+        "condition": "abs(x) >= 1.2",
+        "reset": {
+          "x": ["", "x[1] * 0.95"]
+        }
+      }
+    ]
+  },
+  "init_state": [
+    {
+      "mode": 1,
+      "x": [4],
+      "u": "0.5 * cos(1.2 * t)"
+    },
+    {
+      "mode": 1,
+      "x": [5],
+      "u": "0.5 * cos(1.5 * t)"
+    },
+    {
+      "mode": 1,
+      "x": [6],
+      "u": "0.8 * cos(1.5 * t)"
+    },
+    {
+      "mode": 1,
+      "x": [7],
+      "u": "0.6 * cos(1.1 * t)"
+    },
+    {
+      "mode": 1,
+      "x": [8],
+      "u": "0.75 * cos(0.9 * t)"
+    }
+  ],
+  "config": {
+    "dt": 0.001,
+    "total_time": 10.0,
+    "dim": 2,
+    "need_reset": true,
+    "kernel": "rbf",
+    "other_items": "x[?] ** 3",
+    "class_weight": 1
+  }
+}

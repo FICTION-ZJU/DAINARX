@@ -2,7 +2,7 @@ import re
 
 import numpy as np
 from src.DE import ODE
-from src.DE_Systrem import ODESystem
+from src.ODE_System import ODESystem
 import json
 import matplotlib.pyplot as plt
 from math import *
@@ -44,47 +44,74 @@ class Node:
 
 
 class HybridAutomata:
+    LoopWarning = True
+
     def __init__(self, mode_list, adj, init_mode=None):
         if init_mode is None:
-            self.mode_state = next(iter(adj.keys()))
+            self.mode_state = None
         else:
             self.mode_state = init_mode
         self.mode_list = mode_list
         self.adj = adj
 
     @classmethod
-    def from_json(cls, info):
+    def from_json(cls, info: dict):
         var_list = re.split(r"\s*,\s*", info['var'])
+        input_expr = info.get('input')
+        if input_expr is None:
+            input_list = []
+        else:
+            input_list = re.split(r"\s*,\s*", info.get('input'))
         mode_list = {}
 
         adj = {}
         for mode in info['mode']:
             mode_id = mode['id']
-            mode_list[mode_id] = ODESystem(mode['eq'], var_list)
+            mode_list[mode_id] = ODESystem(mode['eq'], var_list, input_list)
             adj[mode_id] = []
         for edge in info['edge']:
             u_v = re.findall(r'\d+', edge['direction'])
             fun = eval('lambda ' + info['var'] + ':' + edge['condition'])
-            adj[int(u_v[0])].append((int(u_v[1]), fun))
+            reset_val = edge.get("reset", {})
+            adj[int(u_v[0])].append((int(u_v[1]), fun, reset_val))
         return cls(mode_list, adj)
+
+    def getInput(self):
+        return self.mode_list[self.mode_state].getInput()
 
     def next(self, *args):
         res = list(self.mode_list[self.mode_state].next(*args))
+        mode_state = self.mode_state
+        vis = set()
+        via_list = []
+        is_cycle = False
+        switched = False
         while True:
             fl = True
-            for to, fun in self.adj.get(self.mode_state, {}):
+            for to, fun, reset_val in self.adj.get(self.mode_state, {}):
                 if fun(*res):
-                    self.mode_list[to].load(self.mode_list[self.mode_state])
+                    # self.mode_list[to].load(self.mode_list[self.mode_state], reset_val)
                     self.mode_state = to
+                    switched = True
+                    if to in vis:
+                        if HybridAutomata.LoopWarning:
+                            print("warning: find loop!")
+                        is_cycle = True
+                    vis.add(to)
+                    via_list.append((to, reset_val))
                     fl = False
                     break
-            if fl:
+            if fl or is_cycle:
+                if len(via_list) != 0:
+                    to, reset_val = via_list[0] if is_cycle else via_list[-1]
+                    self.mode_list[to].load(self.mode_list[mode_state], reset_val)
+                    self.mode_state = to
                 break
-        return res, self.mode_state
+        return res, mode_state, switched
 
-    def reset(self, init_state):
+    def reset(self, init_state, *args):
         self.mode_state = init_state.get('mode', self.mode_state)
-        self.mode_list[self.mode_state].reset(init_state)
+        self.mode_list[self.mode_state].reset(init_state, *args)
 
 
 if __name__ == "__main__":

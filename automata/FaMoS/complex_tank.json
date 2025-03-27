@@ -137,15 +137,15 @@
   "init_state": [
     {
       "mode": 1,
-      "x1": [22.0],
-      "x2": [21.0],
-      "x3": [25.0]
-    },
-    {
-      "mode": 1,
       "x1": [23.0],
       "x2": [25.0],
       "x3": [28.0]
+    },
+    {
+      "mode": 1,
+      "x1": [22.0],
+      "x2": [21.0],
+      "x3": [25.0]
     },
     {
       "mode": 2,
@@ -201,8 +201,7 @@
     "total_time": 20.0,
     "dim": 1,
     "window_size": 4,
-    "need_bias": true,
-    "other_items": "",
-    "class_weight": 1
+    "class_weight": 0.1,
+    "svm_c": 1e3
   }
 }
