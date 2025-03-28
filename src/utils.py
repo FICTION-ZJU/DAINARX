@@ -1,6 +1,8 @@
 import numpy as np
 
 from src.CurveSlice import Slice
+import matplotlib
+matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 import networkx as nx
 import hashlib
@@ -91,10 +93,59 @@ def get_mode_list(slice_data: list[Slice], gt_mode_list):
     all_gt_mode = np.concatenate(gt_mode_list)
     return all_fit_mode, all_gt_mode
 
+def split_into_segments(mode):
+    segments = []
+    n = len(mode)
+    if n == 0:
+        return segments
+    start = 0
+    current_mode = mode[0]
+    for i in range(1, n):
+        if mode[i] != current_mode:
+            segments.append((start, i, current_mode))
+            start = i
+            current_mode = mode[i]
+    segments.append((start, n, current_mode))
+    return segments
+
+
+def plot_with_mode(data, mode, show=True):
+    # 示例数据
+
+    segments = split_into_segments(mode)
+
+    # 创建颜色映射
+    unique_modes = sorted(set(mode))
+    colors = plt.cm.tab10(np.linspace(0, 1, len(unique_modes)))
+    mode_to_color = {m: color for m, color in zip(unique_modes, colors)}
+
+    plt.figure(figsize=(10, 6))
+
+    last_mode = None
+
+    for start, end, m in segments:
+        if last_mode is not None:
+            plt.plot([start - 1, start], data[(start - 1):(start + 1)],
+                     color=mode_to_color[last_mode], linewidth=2,
+                     label=f'Mode {last_mode}')
+        plt.plot(range(start, end), data[start:end],
+                 color=mode_to_color[m], linewidth=2, label=f'Mode {m}')
+        last_mode = m
+
+    plt.xlabel('Index', fontsize=12)
+    plt.ylabel('Data Value', fontsize=12)
+    plt.title('Data Segmented by Mode with Colored Lines', fontsize=14)
+    # plt.grid(True, linestyle='--', alpha=0.7)
+
+    # 处理图例去重
+    handles, labels = plt.gca().get_legend_handles_labels()
+    by_label = dict(zip(labels, handles))
+    plt.legend(by_label.values(), by_label.keys())
+    if show:
+        plt.show()
+
 
 if __name__ == '__main__':
-    a = ['A1', 'A2', 'A3', 'A4']
-    b = ['B1', 'B2', 'B3', 'B4']
-
-    matching_result = max_bipartite_matching(a, b)
-    print(matching_result)
+    data = [5, 3, 8, 4, 7]
+    mode = [0, 0, 1, 1, 0]
+    plot_with_mode(data, mode)

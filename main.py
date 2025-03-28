@@ -1,11 +1,6 @@
 import json
-import os
-import re
-import time
 import logging
-
-import numpy as np
-import matplotlib.pyplot as plt
+import re
 
 from CreatData import creat_data
 from src.DEConfig import FeatureExtractor
@@ -18,6 +13,13 @@ from src.GuardLearning import guard_learning
 from src.BuildSystem import build_system, get_init_state
 from src.Evaluation import Evaluation
 from src.HybridAutomata import HybridAutomata
+
+
+import matplotlib
+
+matplotlib.use('TkAgg')
+
+import matplotlib.pyplot as plt
 
 
 def run(data_list, input_data, config, evaluation: Evaluation):
@@ -111,7 +113,9 @@ def main(json_path: str, data_path='data', need_creat=None, need_plot=True):
             mode_list.append(mode_data_temp)
             input_list.append(npz_file['input'])
 
-    test_num = 2
+    # plot_with_mode(data[0][0], mode_list[0]) 画分段图
+
+    test_num = 6
 
     print("Be running!")
     evaluation.submit(gt_chp=gt_list[test_num:])
