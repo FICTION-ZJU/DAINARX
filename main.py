@@ -113,7 +113,7 @@ def main(json_path: str, data_path='data', need_creat=None, need_plot=True):
             mode_list.append(mode_data_temp)
             input_list.append(npz_file['input'])
 
-    # plot_with_mode(data[0][0], mode_list[0]) 画分段图
+    plot_with_mode(data[0][0], mode_list[0])
 
     test_num = 6
 

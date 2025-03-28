@@ -93,6 +93,7 @@ def get_mode_list(slice_data: list[Slice], gt_mode_list):
     all_gt_mode = np.concatenate(gt_mode_list)
     return all_fit_mode, all_gt_mode
 
+
 def split_into_segments(mode):
     segments = []
     n = len(mode)
@@ -116,8 +117,8 @@ def plot_with_mode(data, mode, show=True):
 
     # 创建颜色映射
     unique_modes = sorted(set(mode))
-    colors = plt.cm.tab10(np.linspace(0, 1, len(unique_modes)))
-    mode_to_color = {m: color for m, color in zip(unique_modes, colors)}
+    colors = plt.cm.get_cmap('tab10', len(unique_modes))
+    mode_to_color = {m: colors(idx) for idx, m in enumerate(unique_modes)}
 
     plt.figure(figsize=(10, 6))
 
