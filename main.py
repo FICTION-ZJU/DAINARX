@@ -113,9 +113,15 @@ def main(json_path: str, data_path='data', need_creat=None, need_plot=True):
             mode_list.append(mode_data_temp)
             input_list.append(npz_file['input'])
 
-    plot_with_mode(data[0][0], mode_list[0])
+    # plot_data(data[0][0][1000:4000], c='lightgray', c_point='gray')
+    # return
+    # mode = ()
+    # plot_with_mode(data[0][0][1000:3676], mode_list[0][1000:3676])
+    # mode_list[0][2730:3676] = 3
+    # plot_chp(data[0][0][1000:3676], mode_list[0][1000:3676])
+    # plot_chp(data[0][1], mode_list[0])
 
-    test_num = 6
+    test_num = 1
 
     print("Be running!")
     evaluation.submit(gt_chp=gt_list[test_num:])
